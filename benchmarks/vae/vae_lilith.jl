@@ -1,5 +1,5 @@
-using Lilith
-import Lilith.fit!
+using Avalon
+import Avalon.fit!
 using Distributions
 using MLDatasets
 using MLDataUtils

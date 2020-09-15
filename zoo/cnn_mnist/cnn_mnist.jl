@@ -2,7 +2,7 @@
 ## Note that that tutorial and this file use dummy inputs just to demonstrate API,
 ## for fully working example see cnn_mnist2.jl
 
-using Lilith
+using Avalon
 
 # include("../src/core.jl")
 # __init__()

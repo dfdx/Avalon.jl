@@ -1,4 +1,4 @@
-import Lilith.walkstruct
+import Avalon.walkstruct
 
 
 conv3x3(inplanes, outplanes; stride=1, dilation=1) =

@@ -1,7 +1,7 @@
-name = "Lilith"
-uuid = "94c2ca8e-d4e4-11e9-02ac-43cfcaaaed17"
+name = "Avalon"
+uuid = "d462d321-1585-4840-9f3e-06f5c1b6ea25"
 authors = ["Andrei Zhabinski <andrei.zhabinski@gmail.com>"]
-version = "0.2.0"
+version = "0.1.0"
 
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"

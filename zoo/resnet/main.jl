@@ -1,4 +1,4 @@
-using Lilith
+using Avalon
 
 include("model.jl")
 include("imagefolder.jl")
@@ -25,13 +25,13 @@ const NUM_CLASSES = 5
 
 # note that this method doesn't do validation or testing, but is only useful to make sure
 # value of loss function is reduced over time
-function Lilith.fit!(m::ResNet, dataset::ImageFolder, loss_fn;
+function Avalon.fit!(m::ResNet, dataset::ImageFolder, loss_fn;
               n_epochs=10, batch_size=100, opt=Adam(;lr=1e-3), device=CPU(), report_every=1)
     f = (m, x, y) -> loss_fn(m(x), y)
     num_batches = length(dataset) // batch_size
     for epoch in 1:n_epochs
         epoch_loss = 0
-        for (i, (x, y)) in enumerate(Lilith.batchiter(dataset, sz=batch_size))
+        for (i, (x, y)) in enumerate(Avalon.batchiter(dataset, sz=batch_size))
             x = to_device(device, copy(x))
             y = to_device(device, copy(y))
             loss, g = grad(f, m, x, y)

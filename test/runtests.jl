@@ -1,7 +1,7 @@
-using Lilith
-import Lilith: accuracy, recall, precision, confusion_matrix
-import Lilith: RNNCell, LSTMCell, GRUCell, rnn_forward, lstm_forward, gru_forward
-import Lilith: ∇batchnorm2d
+using Avalon
+import Avalon: accuracy, recall, precision, confusion_matrix
+import Avalon: RNNCell, LSTMCell, GRUCell, rnn_forward, lstm_forward, gru_forward
+import Avalon: ∇batchnorm2d
 using Random
 using Test
 import CUDA

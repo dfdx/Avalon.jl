@@ -1,5 +1,5 @@
-using Lilith
-import Lilith: batchiter
+using Avalon
+import Avalon: batchiter
 using MLDatasets
 using BenchmarkTools
 
@@ -69,7 +69,7 @@ end
 # end
 
 # using Yota
-# import Lilith: batchiter
+# import Avalon: batchiter
 
 
 
@@ -78,7 +78,7 @@ end
 # end
 
 
-function Lilith.fit!(m::Net, X::AbstractArray, Y::AbstractArray, loss_fn;
+function Avalon.fit!(m::Net, X::AbstractArray, Y::AbstractArray, loss_fn;
               n_epochs=10, batch_size=100, opt=SGD(1e-3), device=CPU(), report_every=1)
     f = (m, x, y) -> loss_fn(m(x), y)
     num_batches = size(X)[end] // batch_size

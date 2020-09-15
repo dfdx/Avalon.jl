@@ -7,7 +7,7 @@
     @test gradcheck(x -> sum(logsigmoid.(x)), x)
     @test gradcheck(x -> sum(relu.(x)), x)
     @test gradcheck(x -> sum(leakyrelu.(x, 0.01)), x)
-    @test gradcheck(x -> sum(Lilith.elu.(x, 1)), x)
+    @test gradcheck(x -> sum(Avalon.elu.(x, 1)), x)
     
     @test gradcheck(x -> sum(softmax(x)), x)
     @test gradcheck(x -> sum(logsoftmax(x)), x)

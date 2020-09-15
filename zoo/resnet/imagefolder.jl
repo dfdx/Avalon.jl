@@ -84,7 +84,7 @@ function Base.getindex(dataset::ImageFolder, idxs)
 end
 
 
-function Lilith.getbatch(dataset::ImageFolder, i::Int, sz::Int)
+function Avalon.getbatch(dataset::ImageFolder, i::Int, sz::Int)
     start = (i-1)*sz + 1
     finish = min(i*sz, length(dataset))
     start > finish && return nothing
