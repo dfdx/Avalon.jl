@@ -34,5 +34,6 @@ function __init__()
     register_conv_derivs()
     register_batchnorm_derivs()
     register_activation_derivs()
+    register_embed_derivs()
     register_loss_derivs()
 end
