@@ -1,12 +1,16 @@
 ## Code for optimizers adapted from
 ## https://github.com/jacobcvt12/GradDescent.jl/
+import ChainRulesCore
+
 
 abstract type Optimizer end
 
 
 function Yota.update!(opt::Optimizer, m, gm; ignore=Set())
+    # we use Zero() to designate values that need not to be updated
+    gm isa ChainRulesCore.Zero && return
     for (path, gx) in Yota.path_value_pairs(gm)
-        if !in(path, ignore)
+        if !in(path, ignore) && !isa(gx, ChainRulesCore.Zero)
             x_t0 = Yota.getfield_nested(m, path)
             x_t1 = make_update!(opt, path, x_t0, gx)
             Yota.setfield_nested!(m, path, x_t1)
@@ -111,6 +115,8 @@ end
 
 
 function make_update!(opt::Adam, path, x, gx)
+    # no update for symbolic Zero
+    gx isa ChainRulesCore.Zero && return x
     # resize biased moment estimates if first iteration
     m_t = get(opt.m_t, path, zero(gx))
     v_t = get(opt.v_t, path, zero(gx))

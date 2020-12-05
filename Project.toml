@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MLDataUtils = "cc2ba9b6-d476-5e6d-8eaf-a92d5412d41d"
@@ -15,9 +16,10 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Yota = "cd998857-8626-517d-b929-70ad188a48f0"
 
 [compat]
-CUDA = "1.2.1"
+CUDA = "1.2.1, 2.3"
+ChainRulesCore = "0.9.5"
 Distributions = "0.23.2"
 MLDataUtils = "0.5.0"
 NNlib = "0.6.6"
-Yota = "0.4.1"
+Yota = "0.4"
 julia = "1.4"
