@@ -93,8 +93,7 @@ end
 
 
 @testset "cuda: activations" begin
-    x = rand(5, 5);
-    # x = [0.1 0.2 0.3; 0.4 0.5 0.6; 0.7 0.8 0.9]
+    x = rand(Float32, 5, 5);    
     d_x = device(x);
 
     @test grad(x -> sum(logistic.(x)), x)[2][1] ≈ grad(x -> sum(logistic.(x)), d_x)[2][1] |> cpu
