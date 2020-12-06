@@ -23,11 +23,30 @@ elu(x::Real, alpha) = NNlib.elu(x, alpha)
 ∇elu(dy, x::Real, alpha) = ifelse(x >= 0, one(x), alpha * exp(x))
 # + ∇cuelu in cuda.jl
 
-softmax(x::AbstractArray) = NNlib.softmax(x)
-∇softmax(dy, x) = NNlib.∇softmax(dy, x)
+# For softmax(), logsoftmax() and derivatives we wrap mutable versions
+# due to https://github.com/JuliaGPU/CUDA.jl/issues/592
+function softmax(x::AbstractArray)
+    y = similar(x)
+    NNlib.softmax!(y, x)
+    return y
+end
+function ∇softmax(dy, x)
+    dx = similar(x)
+    NNlib.∇softmax!(dx, dy, x)
+    return dx
+end
 
-logsoftmax(x::AbstractArray) = NNlib.logsoftmax(x)
-∇logsoftmax(dy, x) = NNlib.∇logsoftmax(dy, x)
+function logsoftmax(x::AbstractArray)
+    y = similar(x)
+    NNlib.logsoftmax!(y, x)
+    return y
+end
+
+function ∇logsoftmax(dy, x)
+    dx = similar(x)
+    NNlib.∇logsoftmax!(dx, dy, x)
+    return dx
+end
 
 
 function register_activation_derivs()
