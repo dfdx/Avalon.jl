@@ -32,19 +32,22 @@ function softmax(x::AbstractArray)
 end
 function ∇softmax(dy, x)
     dx = similar(x)
-    NNlib.∇softmax!(dx, dy, x)
+    # copy x because CUDA.CUDNN uses broken softmax() inside of ∇softmax!()
+    x_copy = copy(x)
+    NNlib.∇softmax!(dx, dy, x_copy)
     return dx
 end
 
 function logsoftmax(x::AbstractArray)
-    y = similar(x)
+    y = similar(x)    
     NNlib.logsoftmax!(y, x)
     return y
 end
 
 function ∇logsoftmax(dy, x)
     dx = similar(x)
-    NNlib.∇logsoftmax!(dx, dy, x)
+    x_copy = copy(x)
+    NNlib.∇logsoftmax!(dx, dy, x_copy)
     return dx
 end
 
