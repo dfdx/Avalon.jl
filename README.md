@@ -1,6 +1,6 @@
 # Avalon
 
-[![Build Status](https://travis-ci.org/dfdx/Avalon.jl.svg?branch=master)](https://travis-ci.org/dfdx/Avalon.jl)
+[![Build Status](https://travis-ci.org/dfdx/Avalon.jl.svg?branch=main)](https://travis-ci.org/dfdx/Avalon.jl)
 
 
 **Avalon** is a deep learning library in Julia with focus on **high performance** and **interoperability with existing DL frameworks**. Its main features include:
