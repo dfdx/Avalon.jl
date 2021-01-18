@@ -45,6 +45,9 @@ export
     LSTM,
     GRU,
     init_hidden,
+    # embedding
+    embedding,
+    Embedding,
     # optim
     update!,
     SGD,

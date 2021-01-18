@@ -1,37 +1,34 @@
-# include("core.jl")
+include("core.jl")
 
 
 ###############################################################################
 #                                 Embedding                                   #
 ###############################################################################
 
-using Tullio, KernelAbstractions  # , LoopVectorization
+# using Tullio, KernelAbstractions  # , LoopVectorization
 
 
-"""
-onehot(s::AbstractArray)
+# """
+# onehot(s::AbstractArray)
 
-Create a dense one-hot encoded array from an array of labels.
+# Create a dense one-hot encoded array from an array of labels.
 
-Given an array of N dimensions, onehot() returns array of N+1 dimensions,
-where first dimension is equal to the number of classes. For example,
-input matrix of size (seq_len, batch_size) will produce 3D array of size
-(n_classes, seq_len, batch_size).
-"""
-function onehot(s::AbstractVector; n_classes=maximum(s))
-    x = similar(s, n_classes, length(s))
-    return @tullio x[i, j] = (i == s[j]) (i ∈ 1:n_classes)
-end
+# Given an array of N dimensions, onehot() returns array of N+1 dimensions,
+# where first dimension is equal to the number of classes. For example,
+# input matrix of size (seq_len, batch_size) will produce 3D array of size
+# (n_classes, seq_len, batch_size).
+# """
+# function onehot(s::AbstractVector; n_classes=maximum(s))
+#     x = similar(s, n_classes, length(s))
+#     return @tullio x[i, j] = (i == s[j]) (i ∈ 1:n_classes)
+# end
 
-# for matrices onehot() returns 3D array of shape(n_classes, seq_len, batch_size)
-function onehot(s::AbstractArray; n_classes=maximum(s))
-    return reshape(onehot(vec(s); n_classes=n_classes), :, size(s)...)
-end
+# # for matrices onehot() returns 3D array of shape(n_classes, seq_len, batch_size)
+# function onehot(s::AbstractArray; n_classes=maximum(s))
+#     return reshape(onehot(vec(s); n_classes=n_classes), :, size(s)...)
+# end
 
 
-"""
-Simple embedding layer (with no optimizations yet)
-"""
 mutable struct Embedding
     W::AbstractMatrix{T} where T
 end
@@ -64,20 +61,16 @@ end
 function ∇embedding_W(dy::AbstractArray{T, 3}, W::AbstractMatrix, s::AbstractMatrix) where T
     dW = zero(W)
     for j=1:size(s, 2)
-        @show s[:, j]
-        Δ = Yota.ungetindex(W, dy[:, :, j], :, s[:, j])
-        dW += Δ
-        @show Δ
-        @show dW
+        Yota.ungetindex!(dW, W, dy[:, :, j], :, s[:, j])        
     end
     return dW
 end
 
 
-# function register_embed_derivs()
-#     @diffrule embedding(_W, _s) _W ∇embedding_W(dy, _W, _s)
-#     @nodiff embedding(_W, _s) _s
-# end
+function register_embed_derivs()
+    @diffrule embedding(_W, _s) _W ∇embedding_W(dy, _W, _s)
+    @nodiff embedding(_W, _s) _s
+end
 
 (l::Embedding)(s::AbstractMatrix) = embedding(l.W, s)
 
@@ -93,48 +86,48 @@ end
 
 
 
-function countmap(y)
-    d = Dict{Int, Int}()
-    for val in y
-        if isnan(val)
-            continue
-        end
-        if val in keys(d)
-            d[val] += 1
-        else
-            d[val] = 1
-        end
-    end
-    return d
-end
+# function countmap(y)
+#     d = Dict{Int, Int}()
+#     for val in y
+#         if isnan(val)
+#             continue
+#         end
+#         if val in keys(d)
+#             d[val] += 1
+#         else
+#             d[val] = 1
+#         end
+#     end
+#     return d
+# end
 
 
-function reduce_indices(I)
-    cnt = countmap(I)
-    return collect(keys(cnt)), collect(values(cnt))
-end
+# function reduce_indices(I)
+#     cnt = countmap(I)
+#     return collect(keys(cnt)), collect(values(cnt))
+# end
 
 
-function unget!(dx, dy, I...)
-    # for (dy_ii, ii) in zip(dy, Iterators.product(I...))
-    for ii in Iterators.product(I...)
-        # @show ii
-        # dx[ii...] += dy_ii
-    end
-    return dx
-end
-
-
-
-import ScatterNNlib
+# function unget!(dx, dy, I...)
+#     # for (dy_ii, ii) in zip(dy, Iterators.product(I...))
+#     for ii in Iterators.product(I...)
+#         # @show ii
+#         # dx[ii...] += dy_ii
+#     end
+#     return dx
+# end
 
 
 
-function my_scatter_add!(A::AbstractArray, v::AbstractArray, I...)
-    II = collect(Iterators.product(I...))
-    A2 = ScatterNNlib.scatter_add!(reshape(A, 1, size(A)...), reshape(v, 1, size(v)...), II)
-    return dropdims(A2, dims=1)
-end
+# import ScatterNNlib
+
+
+
+# function my_scatter_add!(A::AbstractArray, v::AbstractArray, I...)
+#     II = collect(Iterators.product(I...))
+#     A2 = ScatterNNlib.scatter_add!(reshape(A, 1, size(A)...), reshape(v, 1, size(v)...), II)
+#     return dropdims(A2, dims=1)
+# end
 
 
 function nomain()
@@ -161,25 +154,25 @@ end
 
 
 function main()
-    x = rand(4) |> cu
-    dx = zeros(4) |> cu
-    s = [1, 3, 1] |> cu
-    y = x[s]
-    dy = ones(size(y)) |> cu
-    unget!(dx, dy, s)
-    # use Tullio here?
-    @tullio (dx[i] += dy[i]) (i in s)
-    for i in s
-        dx[i] += dy[i]
-    end
+#     x = rand(4) |> cu
+#     dx = zeros(4) |> cu
+#     s = [1, 3, 1] |> cu
+#     y = x[s]
+#     dy = ones(size(y)) |> cu
+#     unget!(dx, dy, s)
+#     # use Tullio here?
+# #     @tullio (dx[i] += dy[i]) (i in s)
+#     for i in s
+#         dx[i] += dy[i]
+#     end
 
 
-    I2, w = reduce_indices(I)
-    dx[I2...] .+= dy
+#     I2, w = reduce_indices(I)
+#     dx[I2...] .+= dy
 
 
     s = [1 4; 2 5; 1 6]
-    x = onehot(s)
+    # x = onehot(s)
     emb = Embedding(6 => 4)
     W = emb.W
     # W = reshape(emb.W, size(emb.W)..., 1)
