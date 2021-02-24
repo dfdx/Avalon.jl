@@ -3,7 +3,7 @@ module Avalon
 export
     grad,
     @diffrule,
-    @diffrile_kw,
+    @diffrule_kw,
     @nodiff,
     # initialization
     init_constant!,
