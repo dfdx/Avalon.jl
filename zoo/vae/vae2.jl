@@ -58,7 +58,7 @@ function loss_function(m::VAE, eps, x)
     mu, log_s2 = encode(m, x)
     z = mu .+ sqrt.(exp.(log_s2)) .* eps
     x_rec = decode(m, z)
-    BCE = binarycrossentropy(x_rec, x)    
+    BCE = binarycrossentropy(x_rec, x)
     KLD = kldiv_normal(mu, log_s2)
     return BCE + KLD
 end
