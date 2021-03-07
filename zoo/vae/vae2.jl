@@ -12,8 +12,8 @@ function binarycrossentropy(ŷ, y; agg=mean, ϵ=eps(eltype(ŷ)))
     agg(@.(-y * log(ŷ + ϵ) - (1 - y) * log(1 - ŷ + ϵ)))
 end
 
-function kldiv_normal(mu, log_s2)
-    -1/2 * mean(@. 1 + log_s2 - mu ^ 2f0 - exp(log_s2))
+function kldiv_normal(mu, log_s2; agg=mean)
+    -1/2 * agg(@. 1 + log_s2 - mu ^ 2f0 - exp(log_s2))    
 end
 
 
@@ -22,14 +22,26 @@ mutable struct VAE
     enc2mu::Linear
     enc2s::Linear
     decoder::Sequential
+    beta::Real
 end
 
+Avalon.ignored_field(m::VAE, ::Val{(:beta,)}) = true
 
-VAE(encoder::Sequential, z_len::Int, decoder::Sequential) =
+
+VAE(encoder::Sequential, enc2mu::Any, enc2s::Any, decoder::Sequential; beta=1) =
+    VAE(encoder,
+        enc2mu,
+        enc2s,
+        decoder,
+        beta)
+
+
+VAE(encoder::Sequential, z_len::Int, decoder::Sequential; beta=1) =
     VAE(encoder,
         Linear(z_len => z_len),
         Linear(z_len => z_len),
-        decoder)
+        decoder,
+        beta)
 
 
 function Base.show(io::IO, m::VAE)
@@ -58,16 +70,16 @@ function loss_function(m::VAE, eps, x)
     mu, log_s2 = encode(m, x)
     z = mu .+ sqrt.(exp.(log_s2)) .* eps
     x_rec = decode(m, z)
-    BCE = binarycrossentropy(x_rec, x)
-    KLD = kldiv_normal(mu, log_s2)
-    return BCE + KLD
+    BCE = binarycrossentropy(x_rec, x; agg=sum)
+    KLD = kldiv_normal(mu, log_s2; agg=sum)
+    return BCE + m.beta * KLD
 end
 
 
 function fit!(m::VAE, X::AbstractMatrix{T};
               n_epochs=50, batch_size=100, opt=Adam(; lr=1e-5), device=CPU()) where T
-    for epoch in 1:n_epochs
-        print("Epoch $epoch: ")
+    println("Starting training")          
+    for epoch in 1:n_epochs        
         epoch_cost = 0
         t = @elapsed for (i, x) in enumerate(eachbatch(X, size=batch_size))
             x = device(x)
@@ -76,7 +88,7 @@ function fit!(m::VAE, X::AbstractMatrix{T};
             update!(opt, m, g[1])
             epoch_cost += cost
         end
-        println("avg_cost=$(epoch_cost / (size(X,2) / batch_size)), elapsed=$t")
+        println("Epoch $epoch: avg_cost=$(epoch_cost / (size(X,2) / batch_size)), elapsed=$t")
     end
     return m
 end

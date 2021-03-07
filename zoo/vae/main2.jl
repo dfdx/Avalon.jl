@@ -20,7 +20,7 @@ function show_pic(x)
 end
 
 
-function show_all(m, X, device, n=1)
+function show_recon(m, X, device; n=5)
     subplots = []
     cpu = CPU()
     for i in rand(1:size(X, 2), n)
@@ -34,42 +34,51 @@ function show_all(m, X, device, n=1)
 end
 
 
+function show_latent_var(m, z_idx, device)
+    vals = collect(-1:0.1:1)
+    z_len = length(m.enc2mu.b)  # assuming Linear
+    z = zeros(z_len, length(vals))
+    for i in 1:size(z, 2)
+        z[z_idx, i] = vals[i]
+    end
+    z = device(z)
+    x_ = decode(m, z) |> CPU()
+    subplots = [show_pic(x_[:, i]) for i in 1:size(x_, 2)]
+    plot(subplots..., layout=length(subplots))
+end
+
+
+function show_samples(m, n, device)    
+    z_len = length(m.enc2mu.b)  # assuming Linear
+    z = randn(z_len, n)
+    z = device(z)
+    x_ = decode(m, z) |> CPU()
+    subplots = [show_pic(x_[:, i]) for i in 1:size(x_, 2)]
+    plot(subplots..., layout=length(subplots))
+end
+
+
 function main()
-    device = best_available_device()
+    device = best_available_device()    
     m = VAE(
         Sequential(
-            Linear(784 => 512), 
-            x -> tanh.(x), 
-            Linear(512 => 256),
-            x -> tanh.(x)),      
-        Linear(256 => 128),
-        Linear(256 => 128),
+            Linear(784 => 400), 
+            x -> relu.(x)),
+        Linear(400 => 20),
+        Linear(400 => 20),
         Sequential(
-            Linear(128 => 256), 
-            x -> tanh.(x), 
-            Linear(256 => 512), 
-            x -> tanh.(x), 
-            Linear(512 => 784), 
-            x -> logistic.(x)))
-    # m = VAE(
-    #     Sequential(
-    #         Linear(784 => 400),
-    #         x -> tanh.(x)),
-    #     Linear(400 => 128),
-    #     Linear(400 => 128),
-    #     Sequential(
-    #         Linear(128 => 400),
-    #         x -> tanh.(x), 
-    #         Linear(400 => 784), 
-    #         x -> logistic.(x)))
+            Linear(20 => 400), 
+            x -> relu.(x),             
+            Linear(400 => 784), 
+            x -> logistic.(x));
+        beta=10)
     m = m |> device
 
     X, _ = MNIST.traindata()
     X = convert(Matrix{Float64}, reshape(X, 784, 60000))
-    @time m = fit!(m, X, device=device, opt=Adam(; lr=1e-5), n_epochs=100)
+    @time m = fit!(m, X, device=device, opt=Adam(; lr=1e-3), n_epochs=10)
 
-    # hypothesis 1: one part of the loss is already minified, another contains error
-    # hypothesis 2: mean instead of sum
-    # hypothesis 3: enc2mu & enc2s2 are too small
-    show_all(m, X, device, 5)
+    show_recon(m, X, device, n=5)
+    show_latent_var(m, 1, device)
+    show_samples(m, 10, device)
 end

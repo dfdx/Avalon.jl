@@ -3,6 +3,34 @@
 import ChainRulesCore
 
 
+"""Should we ignore field with this path when updating the struct?"""
+ignored_field(st::S, path::Val) where S = false
+
+
+_dot_path(x::Symbol) = [x]
+
+function _dot_path(ex::Expr)
+    subresult = _dot_path(ex.args[1])    
+    return [subresult; [ex.args[2].value]]
+end
+
+"""
+Ignore this field when updating the struct. Example:
+
+mutable struct MyModel
+    linear::Linear
+end
+
+@ignore MyModel.linear.b
+"""
+macro ignore(ex)
+    @assert Meta.isexpr(ex, :(.))
+    full_path = _dot_path(ex)
+    T, path = full_path[1], (full_path[2:end]...,)
+    return esc(:($ignored_field(st::$T, path::Val{$path}) = true))
+end
+
+
 abstract type Optimizer end
 
 
@@ -10,7 +38,7 @@ function Yota.update!(opt::Optimizer, m, gm; ignore=Set())
     # we use Zero() to designate values that need not to be updated
     gm isa ChainRulesCore.Zero && return
     for (path, gx) in Yota.path_value_pairs(gm)
-        if !in(path, ignore) && !isa(gx, ChainRulesCore.Zero)
+        if !in(path, ignore) && !ignored_field(m, Val(path)) && !isa(gx, ChainRulesCore.Zero)
             x_t0 = Yota.getfield_nested(m, path)
             x_t1 = make_update!(opt, path, x_t0, gx)
             Yota.setfield_nested!(m, path, x_t1)
