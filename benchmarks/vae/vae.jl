@@ -6,8 +6,6 @@ using MLDataUtils
 using BenchmarkTools
 
 
-
-# variational autoencoder with Gaussian observed and latent variables
 mutable struct VAE
     # encoder / recognizer
     enc_i2h::Linear

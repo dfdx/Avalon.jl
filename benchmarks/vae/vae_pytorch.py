@@ -26,7 +26,7 @@ from torchvision.utils import save_image
 
 torch.manual_seed(42)
 BATCH_SIZE = 100
-N_EPOCHS = 10
+N_EPOCHS = 100
 
 
 class VAE(nn.Module):
@@ -61,13 +61,13 @@ class VAE(nn.Module):
 
 # Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
-    BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
+    BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='mean')
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
     # https://arxiv.org/abs/1312.6114
     # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
-    KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    KLD = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
 
     return BCE + KLD
 
@@ -113,6 +113,12 @@ def test(epoch):
 
     
 def main():
+    # due to https://github.com/pytorch/vision/issues/1938
+    from six.moves import urllib
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    urllib.request.install_opener(opener)
+
     kwargs = {'num_workers': 1, 'pin_memory': True}
     device = torch.device("cuda")
     train_loader = torch.utils.data.DataLoader(
@@ -124,7 +130,7 @@ def main():
     batch_size=BATCH_SIZE, shuffle=True, **kwargs)
 
     model = VAE().to(device)
-    optimizer = optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = optim.Adam(model.parameters(), lr=1e-5)
     for epoch in range(1, N_EPOCHS + 1):
         train(epoch)
         # test(epoch)
@@ -133,3 +139,7 @@ def main():
         #     sample = model.decode(sample).cpu()
         #     save_image(sample.view(64, 1, 28, 28),
         #                'results/sample_' + str(epoch) + '.png')
+
+
+if __name__ == "__main__":
+    main()
