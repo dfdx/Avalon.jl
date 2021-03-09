@@ -66,9 +66,9 @@ end
 decode(m::VAE, z) = m.decoder(z)
 
 
-function loss_function(m::VAE, eps, x)
+function loss_function(m::VAE, ϵ, x)
     mu, log_s2 = encode(m, x)
-    z = mu .+ sqrt.(exp.(log_s2)) .* eps
+    z = mu .+ sqrt.(exp.(log_s2)) .* ϵ
     x_rec = decode(m, z)
     BCE = binarycrossentropy(x_rec, x; agg=sum)
     KLD = kldiv_normal(mu, log_s2; agg=sum)
@@ -83,8 +83,8 @@ function fit!(m::VAE, X::AbstractMatrix{T};
         epoch_cost = 0
         t = @elapsed for (i, x) in enumerate(eachbatch(X, size=batch_size))
             x = device(x)
-            eps = typeof(x)(rand(Normal(0, 1), size(m.enc2mu.W, 1), batch_size))
-            cost, g = grad(loss_function, m, eps, x)
+            ϵ = typeof(x)(rand(Normal(0, 1), size(m.enc2mu.W, 1), batch_size))
+            cost, g = grad(loss_function, m, ϵ, x)
             update!(opt, m, g[1])
             epoch_cost += cost
         end

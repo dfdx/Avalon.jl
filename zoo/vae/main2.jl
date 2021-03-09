@@ -2,6 +2,7 @@ using MLDatasets
 using MLDataUtils
 using Plots
 using Images
+using Interact
 
 
 include("vae2.jl")
@@ -34,17 +35,27 @@ function show_recon(m, X, device; n=5)
 end
 
 
-function show_latent_var(m, z_idx, device)
-    vals = collect(-1:0.1:1)
-    z_len = length(m.enc2mu.b)  # assuming Linear
-    z = zeros(z_len, length(vals))
-    for i in 1:size(z, 2)
-        z[z_idx, i] = vals[i]
+function interpolate_latent_var(m, x, z_idx, device)
+    vals = collect(-2:0.5:2)
+    z = m(x)
+    xs_ = []
+    cpu = CPU()
+    for v in vals
+        z[z_idx, :] = v
+        x_ = decode(m, device(z)) |> cpu
+        push!(xs_, x_)
     end
-    z = device(z)
-    x_ = decode(m, z) |> CPU()
-    subplots = [show_pic(x_[:, i]) for i in 1:size(x_, 2)]
-    plot(subplots..., layout=length(subplots))
+    subplots = [show_pic(x_) for x_ in xs_]
+    # plot(subplots..., layout=length(subplots))
+    return subplots
+end
+
+
+function show_latent_vars(m, x, z_idxs, device)
+    groups = [interpolate_latent_var(m, x, z_idx, device) for z_idx in z_idxs]
+    subplots = vcat(groups...)
+    n_cols = length(groups[1])
+    plot(subplots..., layout=(length(z_idxs), n_cols))
 end
 
 
@@ -71,7 +82,7 @@ function main()
             x -> relu.(x),             
             Linear(400 => 784), 
             x -> logistic.(x));
-        beta=10)
+        beta=5)
     m = m |> device
 
     X, _ = MNIST.traindata()
@@ -79,6 +90,6 @@ function main()
     @time m = fit!(m, X, device=device, opt=Adam(; lr=1e-3), n_epochs=10)
 
     show_recon(m, X, device, n=5)
-    show_latent_var(m, 1, device)
+    show_latent_vars(m, device(X[:, 2]), 1:4, device)
     show_samples(m, 10, device)
 end
