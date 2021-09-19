@@ -39,7 +39,7 @@ function ∇softmax(dy, x)
 end
 
 function logsoftmax(x::AbstractArray)
-    y = similar(x)    
+    y = similar(x)
     NNlib.logsoftmax!(y, x)
     return y
 end
@@ -53,15 +53,15 @@ end
 
 
 function register_activation_derivs()
-    @diffrule logistic(x::Real) x ∇logistic(dy, x)
-    @diffrule softplus(x::Real) x ∇softplus(dy, x)
-    @diffrule softsign(x::Real) x ∇softsign(dy, x)
-    @diffrule logsigmoid(x::Real) x ∇logsigmoid(dy, x)
-    @diffrule relu(x::Real) x ∇relu(dy, y)
-    @diffrule leakyrelu(x::Real, _alpha::Real) x ∇leakyrelu(dy, x, _alpha)
-    @diffrule elu(x::Real, _alpha::Real) x ∇elu(dy, x, _alpha)
-    @nodiff leakyrelu(x::Real, _alpha::Real) _alpha
-    
-    @diffrule softmax(x) x ∇softmax(dy, x)
-    @diffrule logsoftmax(x) x ∇logsoftmax(dy, x)
+    # @diffrule logistic(x::Real) x ∇logistic(dy, x)
+    # @diffrule softplus(x::Real) x ∇softplus(dy, x)
+    # @diffrule softsign(x::Real) x ∇softsign(dy, x)
+    # @diffrule logsigmoid(x::Real) x ∇logsigmoid(dy, x)
+    # @diffrule relu(x::Real) x ∇relu(dy, y)
+    # @diffrule leakyrelu(x::Real, _alpha::Real) x ∇leakyrelu(dy, x, _alpha)
+    # @diffrule elu(x::Real, _alpha::Real) x ∇elu(dy, x, _alpha)
+    # @nodiff leakyrelu(x::Real, _alpha::Real) _alpha
+
+    # @diffrule softmax(x) x ∇softmax(dy, x)
+    # @diffrule logsoftmax(x) x ∇logsoftmax(dy, x)
 end

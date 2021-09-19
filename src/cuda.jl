@@ -48,25 +48,25 @@ end
 ## activations
 
 culogistic(x) = one(x) / (one(x) + CUDA.exp(-x))
-CUDA.cufunc(::typeof(logistic)) = culogistic
+CUDA.cufunction(::typeof(logistic)) = culogistic
 
 ∇culogistic(dy, x) = culogistic(x) * (one(x) - culogistic(x)) * dy
-CUDA.cufunc(::typeof(∇logistic)) = ∇culogistic
+CUDA.cufunction(::typeof(∇logistic)) = ∇culogistic
 
 cusoftplus(x) = CUDA.log(CUDA.exp(x) + one(x))
-CUDA.cufunc(::typeof(softplus)) = cusoftplus
+CUDA.cufunction(::typeof(softplus)) = cusoftplus
 
 ∇cusoftplus(dy, x) = culogistic(x) * dy
-CUDA.cufunc(::typeof(∇softplus)) = ∇cusoftplus
+CUDA.cufunction(::typeof(∇softplus)) = ∇cusoftplus
 
 ∇cuelu(dy, x::Real, alpha) = ifelse(x >= 0, x/1, alpha * CUDA.exp(x))
-CUDA.cufunc(::typeof(∇elu)) = ∇cuelu
+CUDA.cufunction(::typeof(∇elu)) = ∇cuelu
 
 
 ## batchnorm
 
 function batchnorm_impl(gamma::CuArray, beta::CuArray, x::CuArray,
-                        mu::CuArray, sigma2::CuArray, momentum::Real; eps, training)    
+                        mu::CuArray, sigma2::CuArray, momentum::Real; eps, training)
     CUDNN.batchnorm(gamma, beta, x, mu, sigma2, momentum; eps=eps, training=training)
 end
 
@@ -74,5 +74,5 @@ function ∇batchnorm_impl(gamma::CuArray, beta::CuArray, x::CuArray, dy::CuArra
                          mu::CuArray, sigma2::CuArray, momentum; eps, training)
     CUDNN.∇batchnorm(gamma, beta, x, dy, mu, sigma2, momentum; eps=eps, training=training)
 end
-                    
+
 

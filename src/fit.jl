@@ -84,8 +84,8 @@ function fit!(m, X::AbstractArray, Y::AbstractArray, loss_fn;
     for epoch in 1:n_epochs
         epoch_loss = 0
         for (i, (x, y)) in enumerate(batchiter((X, Y), sz=batch_size))
-            x = to_device(device, copy(x))
-            y = to_device(device, copy(y))
+            x = device(copy(x))
+            y = device(copy(y))
             loss, g = grad(f, m, x, y)
             update!(opt, m, g[1])
             epoch_loss += loss
@@ -105,7 +105,7 @@ function partial_fit!(m, X::AbstractArray, loss_fn;
     epoch_loss = 0
     f = (m, x) -> loss_fn(m(x))
     for (i, x) in enumerate(batchiter(X, sz=batch_size))
-        x = to_device(device, copy(x))
+        x = device(copy(x))
         loss, g = grad(f, m, x)
         update!(opt, m, g[1])
         epoch_loss += loss

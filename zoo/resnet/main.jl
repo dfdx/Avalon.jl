@@ -32,8 +32,8 @@ function Avalon.fit!(m::ResNet, dataset::ImageFolder, loss_fn;
     for epoch in 1:n_epochs
         epoch_loss = 0
         for (i, (x, y)) in enumerate(Avalon.batchiter(dataset, sz=batch_size))
-            x = to_device(device, copy(x))
-            y = to_device(device, copy(y))
+            x = device(copy(x))
+            y = device(copy(y))
             loss, g = grad(f, m, x, y)
             update!(opt, m, g[1])
             epoch_loss += loss

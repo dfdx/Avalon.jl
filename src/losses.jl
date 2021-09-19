@@ -18,7 +18,7 @@ Negative log-likelihood. ŷ should be a vector of normalized log probabilities.
 """
 function nllloss(ŷ::AbstractMatrix, c::AbstractVector{<:Real})
     loss = 0
-    for j=1:size(ŷ, 2)        
+    for j=1:size(ŷ, 2)
         i = Int(c[j])
         loss += -ŷ[i, j]
     end
@@ -80,6 +80,6 @@ mseloss(inp::AbstractArray, target::AbstractArray) = mean((inp .- target) .^ 2)
 
 
 function register_loss_derivs()
-    @diffrule nllloss(x, _c) x ∇nllloss(dy, x, _c)
-    @nodiff nllloss(x, _c) _c
+    # @diffrule nllloss(x, _c) x ∇nllloss(dy, x, _c)
+    # @nodiff nllloss(x, _c) _c
 end

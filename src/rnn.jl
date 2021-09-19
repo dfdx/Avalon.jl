@@ -57,7 +57,7 @@ end
 # x_seq should be of size (inp_size, batch, seq_len)
 # h should be of size (hid_size, batch)
 function forward(m::RNN, x_seq::AbstractArray{T, 3}, h::AbstractArray{T, 2}) where T
-    device = Yota.guess_device([h])
+    # device = Yota.guess_device([h])
     inp_size, batch, seq_len = size(x_seq)
     hid_size = length(m.cell.b_hh)
     h_all_sz = (size(h)..., 1)
@@ -66,7 +66,7 @@ function forward(m::RNN, x_seq::AbstractArray{T, 3}, h::AbstractArray{T, 2}) whe
     x = x_seq[:, :, 1]
     h = forward(cell, x, h)
     h_all = reshape(h, h_all_sz)
-    # all other elements        
+    # all other elements
     for i=2:size(x_seq, 3)
         x = x_seq[:, :, i]
         h = forward(cell, x, h)
@@ -147,9 +147,9 @@ end
 # x_seq should be of size (inp_size, batch, seq_len)
 # h and c should be of size (hid_size, batch)
 function forward(m::LSTM, x_seq::AbstractArray{T, 3}, h::AbstractArray{T, 2}, c::AbstractArray{T, 2}) where T
-    device = Yota.guess_device([h])
+    # device = Yota.guess_device([h])
     inp_size, batch, seq_len = size(x_seq)
-    hid_size = size(h, 1)    
+    hid_size = size(h, 1)
     h_all_sz = (size(h)..., 1)
     cell = m.cell
     # 1st element
@@ -196,7 +196,7 @@ function gru_forward(W_ih, W_hh, b_ih, b_hh, x, h)
     y_i = W_ih*x .+ b_ih
     y_h = W_hh*h .+ b_hh
     # parameters are slices of precalculated y_i and y_h
-    s1 = slice(hid_len, 1); s2 = slice(hid_len, 2); s3 = slice(hid_len, 3) 
+    s1 = slice(hid_len, 1); s2 = slice(hid_len, 2); s3 = slice(hid_len, 3)
     r = σ.(y_i[s1, :] .+ y_h[s1, :])
     z = σ.(y_i[s2, :] .+ y_h[s2, :])
     n = tanh.(y_i[s3, :] .+ r .* y_h[s3, :])
@@ -229,9 +229,9 @@ end
 # x_seq should be of size (inp_size, batch, seq_len)
 # h should be of size (hid_size, batch)
 function forward(m::GRU, x_seq::AbstractArray{T, 3}, h::AbstractArray{T, 2}) where T
-    device = Yota.guess_device([h])
+    # device = Yota.guess_device([h])
     inp_size, batch, seq_len = size(x_seq)
-    hid_size = size(h, 1)    
+    hid_size = size(h, 1)
     h_all_sz = (size(h)..., 1)
     cell = m.cell
     # 1st element

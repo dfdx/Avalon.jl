@@ -137,8 +137,8 @@ function Distributions.gradlogpdf(ds::AbstractVector, d::MvNormal, x::AbstractMa
     return ret
 end
 
-@nodiff Distributions.logpdf(_d::MvNormal, _x) _d
-@diffrule Distributions.logpdf(_d::MvNormal, _x) _x Distributions.gradlogpdf(dy, _d, _x)
+# @nodiff Distributions.logpdf(_d::MvNormal, _x) _d
+# @diffrule Distributions.logpdf(_d::MvNormal, _x) _x Distributions.gradlogpdf(dy, _d, _x)
 
 
 function logprob(flow::RealNVP, x)

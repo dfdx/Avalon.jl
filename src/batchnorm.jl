@@ -36,7 +36,7 @@ end
 function ∇batchnorm_impl(gamma::AbstractArray, beta::AbstractArray, x::AbstractArray, dy::AbstractArray,
                          mu::AbstractArray, sigma2::AbstractArray, momentum; eps, training)
     # based on:
-    # https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html    
+    # https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html
     sum_dims = tuple([i for i=1:ndims(x) if size(x, i) != size(mu, i)]...)   # all dims but channel
     P = prod(size(x, i) for i in sum_dims)   # product of all dims but channel
     typ = eltype(gamma)
@@ -54,7 +54,7 @@ function ∇batchnorm_impl(gamma::AbstractArray, beta::AbstractArray, x::Abstrac
     divar = sum(dxhat .* xmu; dims=sum_dims)
     dxmu1 = dxhat .* ivar
     dsqrtvar = -(sqrtvar .^ -2) .* divar
-    dvar = _05 ./ sqrtvar .* dsqrtvar    
+    dvar = _05 ./ sqrtvar .* dsqrtvar
     dsq = one(typ) ./ P .* dvar
     dxmu2 = 2 .* xmu .* dsq
     dx1 = (dxmu1 .+ dxmu2)
@@ -119,10 +119,10 @@ end
 
 
 function register_batchnorm_derivs()
-    @nodiff batchnorm2d(_m, _gamma, _beta, x) _m
-    @diffrule batchnorm2d(_m, _gamma, _beta, x) _gamma getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 1)
-    @diffrule batchnorm2d(_m, _gamma, _beta, x) _beta getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 2)
-    @diffrule batchnorm2d(_m, _gamma, _beta, x) x getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 3)
+    # @nodiff batchnorm2d(_m, _gamma, _beta, x) _m
+    # @diffrule batchnorm2d(_m, _gamma, _beta, x) _gamma getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 1)
+    # @diffrule batchnorm2d(_m, _gamma, _beta, x) _beta getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 2)
+    # @diffrule batchnorm2d(_m, _gamma, _beta, x) x getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 3)
 end
 
 
