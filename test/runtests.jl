@@ -11,9 +11,9 @@ import ChainRulesTestUtils: test_rrule
 
 Random.seed!(108);
 
-## include("gradcheck.jl")
-#include("bcast.jl")
-#include("conv.jl")
+# include("gradcheck.jl")
+include("bcast.jl")
+include("conv.jl")
 include("rnn.jl")
 # include("activations.jl")
 # include("layers.jl")

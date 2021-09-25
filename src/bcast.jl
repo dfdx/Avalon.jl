@@ -13,4 +13,10 @@ function rrule(::typeof(Broadcast.broadcasted), ::typeof(tanh), x)
 end
 
 
-
+function rrule(::typeof(Broadcast.broadcasted), ::typeof(-), a, b)
+  y = a .- b
+  function bcast_minus_pullback(dy)
+    return NoTangent(), NoTangent(), dy, -dy
+  end
+  return y, bcast_minus_pullback
+end
