@@ -18,7 +18,7 @@ export
     logsigmoid,
     relu,
     leakyrelu,
-    # elu,
+    elu,
     softmax,
     logsoftmax,
     # losses

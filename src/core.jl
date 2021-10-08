@@ -6,6 +6,8 @@ using Distributions
 import NNlib
 using CUDA
 import ChainRulesCore: rrule, rrule_via_ad, NoTangent, ZeroTangent, @thunk, unthunk
+using Tullio, KernelAbstractions, LoopVectorization
+
 
 include("yota_ext.jl")
 include("utils.jl")
@@ -21,20 +23,3 @@ include("optim.jl")
 include("fit.jl")
 include("metrics.jl")
 include("cuda.jl")
-
-
-# if CUDA.functional()
-#     try
-#         include("cuda.jl")
-#     catch ex
-#         @warn "CUDA is installed, but not working properly" exception=(ex,catch_backtrace())
-#     end
-# end
-
-
-# function __init__()
-#     register_conv_derivs()
-#     register_batchnorm_derivs()
-#     register_activation_derivs()
-#     register_loss_derivs()
-# end
