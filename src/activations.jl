@@ -37,7 +37,7 @@ for (f, df) in UNARY_ACTS
 end
 
 
-∇leakyrelu(dy::Real, y::T, alpha) where T <: Real = ifelse(y > 0, dy, T(alpha))
+∇leakyrelu(dy::Real, y::T, alpha) where T <: Real = ifelse(y > 0, T(dy), T(alpha))
 
 function ChainRulesCore.rrule(::typeof(leakyrelu), x::Number, alpha::Number)
     y = leakyrelu(x, alpha)
@@ -46,11 +46,12 @@ function ChainRulesCore.rrule(::typeof(leakyrelu), x::Number, alpha::Number)
 end
 
 function ChainRulesCore.rrule(::typeof(Broadcast.broadcasted), ::typeof(leakyrelu),
-        x::AbstractArray, alpha::Number)
+        x::AbstractArray{T}, alpha::Number) where T
+    alpha = T(alpha)
     y = leakyrelu.(x, alpha)
     function bcast_leakyrelu_pullback(dy)
         dy = unthunk(dy)
-        return (NoTangent(), NoTangent(), ∇leakyrelu.(dy, x, alpha), NoTangent())
+        return (NoTangent(), NoTangent(), ∇leakyrelu.(dy, y, alpha), NoTangent())
     end
     return y, bcast_leakyrelu_pullback
 end

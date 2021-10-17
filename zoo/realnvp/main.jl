@@ -158,7 +158,7 @@ function fit!(flow::RealNVP, X::AbstractMatrix{T};
         epoch_cost = 0
         t = @elapsed for (i, x) in enumerate(eachbatch(X, size=batch_size))
             cost, g = grad(loss, flow, x)
-            update!(opt, flow, g[1]; ignore=[(c, :mask) for c in [:c1, :c2, :c3, :c4, :c5, :c6]])
+            update!(opt, flow, g[2]; ignore=[(c, :mask) for c in [:c1, :c2, :c3, :c4, :c5, :c6]])
             epoch_cost += cost
         end
         if epoch % report_every == 0

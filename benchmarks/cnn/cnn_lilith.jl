@@ -57,7 +57,7 @@ function main(device=best_available_device())
     @time fit!(m, X_trn, Y_trn, loss_fn; n_epochs=10, opt=opt, batch_size=100, device=device)
 
     x = X_trn[:,:,:,1:100] |> device
-    @benchmark m(x)    
+    @benchmark m(x)
 end
 
 
@@ -88,7 +88,7 @@ function Avalon.fit!(m::Net, X::AbstractArray, Y::AbstractArray, loss_fn;
             x = to_device(device, copy(x))
             y = to_device(device, copy(y))
             loss, g = grad(f, m, x, y)
-            update!(opt, m, g[1])
+            update!(opt, m, g[2])
             epoch_loss += loss
         end
         if epoch % report_every == 0

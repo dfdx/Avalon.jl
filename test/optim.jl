@@ -14,20 +14,20 @@ my_model_loss(m::MyModel, x::AbstractArray) = sum(m(x))
     _, g = grad(my_model_loss, m, x)
 
     # SGD
-    update!(SGD(0.1; momentum=0.5), m, g[1])
+    update!(SGD(0.1; momentum=0.5), m, g[2])
     @test old_m.linear.W != m.linear.W
-    update!(SGD(0.1; momentum=0.5), x, g[2])
+    update!(SGD(0.1; momentum=0.5), x, g[3])
     @test old_x != x
 
     # RMSprop
-    update!(RMSprop(), m, g[1])
+    update!(RMSprop(), m, g[2])
     @test old_m.linear.W != m.linear.W
-    update!(RMSprop(), x, g[2])
+    update!(RMSprop(), x, g[3])
     @test old_x != x
 
     # Adam
-    update!(Adam(), m, g[1])
+    update!(Adam(), m, g[2])
     @test old_m.linear.W != m.linear.W
-    update!(Adam(), x, g[2])
+    update!(Adam(), x, g[3])
     @test old_x != x
 end

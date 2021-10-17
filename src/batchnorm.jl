@@ -1,3 +1,6 @@
+import ChainRulesCore.Tangent
+
+
 mutable struct BatchNorm2d
     gamma::AbstractArray
     beta::AbstractArray
@@ -59,7 +62,8 @@ function ∇batchnorm_impl(gamma::AbstractArray, beta::AbstractArray, x::Abstrac
     dxmu2 = 2 .* xmu .* dsq
     dx1 = (dxmu1 .+ dxmu2)
     dmu = -sum(dxmu1 .+ dxmu2; dims=sum_dims)
-    dx2 = Yota.∇mean(x, dmu, sum_dims)
+    # dx2 = Yota.∇mean(x, dmu, sum_dims)
+    dx2 = Yota.∇mean(dmu, mean, x, sum_dims)[2]
     dx = dx1 .+ dx2
     return dgamma, dbeta, dx
 end
@@ -118,12 +122,21 @@ function ∇batchnorm2d(dy, m::BatchNorm2d, gamma, beta, x)
 end
 
 
-function register_batchnorm_derivs()
-    # @nodiff batchnorm2d(_m, _gamma, _beta, x) _m
-    # @diffrule batchnorm2d(_m, _gamma, _beta, x) _gamma getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 1)
-    # @diffrule batchnorm2d(_m, _gamma, _beta, x) _beta getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 2)
-    # @diffrule batchnorm2d(_m, _gamma, _beta, x) x getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 3)
+function ChainRulesCore.rrule(::typeof(batchnorm2d), m::BatchNorm2d, gamma, beta, x)
+    y = batchnorm2d(m, gamma, beta, x)
+    function batchnorm2d_pullback(dy)
+        dgamma, dbeta, dx = ∇batchnorm2d(dy, m, gamma, beta, x)
+        return NoTangent(), Tangent{BatchNorm2d}(gamma=dgamma, beta=dbeta), dgamma, dbeta, dx
+    end
+    return y, batchnorm2d_pullback
 end
+
+# function register_batchnorm_derivs()
+#     # @nodiff batchnorm2d(_m, _gamma, _beta, x) _m
+#     # @diffrule batchnorm2d(_m, _gamma, _beta, x) _gamma getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 1)
+#     # @diffrule batchnorm2d(_m, _gamma, _beta, x) _beta getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 2)
+#     # @diffrule batchnorm2d(_m, _gamma, _beta, x) x getindex(∇batchnorm2d(dy, _m, _gamma, _beta, x), 3)
+# end
 
 
 

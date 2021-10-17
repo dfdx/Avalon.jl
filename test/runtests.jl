@@ -20,6 +20,6 @@ include("losses.jl")
 include("optim.jl")
 include("metrics.jl")
 
-# if CUDA.functional()
-#     include("cuda.jl")
-# end
+if CUDA.functional()
+    include("cuda.jl")
+end

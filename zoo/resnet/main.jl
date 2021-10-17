@@ -35,7 +35,7 @@ function Avalon.fit!(m::ResNet, dataset::ImageFolder, loss_fn;
             x = device(copy(x))
             y = device(copy(y))
             loss, g = grad(f, m, x, y)
-            update!(opt, m, g[1])
+            update!(opt, m, g[2])
             epoch_loss += loss
             println("  batch loss = $loss")
         end

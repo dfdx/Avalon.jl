@@ -69,7 +69,7 @@ function fit!(m::VAE, X::AbstractMatrix{T};
             x = device(x)
             eps = typeof(x)(rand(Normal(0, 1), size(m.enc_h2mu.W, 1), batch_size))
             cost, g = grad(vae_cost, m, eps, x)
-            update!(opt, m, g[1])
+            update!(opt, m, g[2])
             epoch_cost += cost
         end
         println("avg_cost=$(epoch_cost / (size(X,2) / batch_size)), elapsed=$t")

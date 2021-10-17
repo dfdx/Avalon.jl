@@ -3,8 +3,9 @@ using Base.Iterators
 using Statistics
 using MLDataUtils
 using Distributions
-import NNlib
 using CUDA
+import NNlib
+import NNlibCUDA
 import ChainRulesCore: rrule, rrule_via_ad, NoTangent, ZeroTangent, @thunk, unthunk
 using Tullio, KernelAbstractions, LoopVectorization
 
@@ -22,4 +23,5 @@ include("batchnorm.jl")
 include("optim.jl")
 include("fit.jl")
 include("metrics.jl")
+include("devices.jl")
 include("cuda.jl")

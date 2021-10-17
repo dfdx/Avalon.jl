@@ -85,7 +85,7 @@ function fit!(m::VAE, X::AbstractMatrix{T};
             x = device(x)
             ϵ = typeof(x)(rand(Normal(0, 1), size(m.enc2mu.W, 1), batch_size))
             cost, g = grad(loss_function, m, ϵ, x)
-            update!(opt, m, g[1])
+            update!(opt, m, g[2])
             epoch_cost += cost
         end
         println("Epoch $epoch: avg_cost=$(epoch_cost / (size(X,2) / batch_size)), elapsed=$t")

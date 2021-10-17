@@ -58,7 +58,7 @@ end
 #         x = to_device(device, copy(x))
 #         y = to_device(device, copy(y))
 #         loss, g = grad(full_loss_fn, m, x, y)
-#         update!(opt, m, g[1])
+#         update!(opt, m, g[2])
 #     end
 #     return epoch_loss / size(X)[end]
 # end
@@ -87,7 +87,7 @@ function fit!(m, X::AbstractArray, Y::AbstractArray, loss_fn;
             x = device(copy(x))
             y = device(copy(y))
             loss, g = grad(f, m, x, y)
-            update!(opt, m, g[1])
+            update!(opt, m, g[2])
             epoch_loss += loss
         end
         if epoch % report_every == 0
@@ -107,7 +107,7 @@ function partial_fit!(m, X::AbstractArray, loss_fn;
     for (i, x) in enumerate(batchiter(X, sz=batch_size))
         x = device(copy(x))
         loss, g = grad(f, m, x)
-        update!(opt, m, g[1])
+        update!(opt, m, g[2])
         epoch_loss += loss
         println("iter $i: loss=$loss")
     end
