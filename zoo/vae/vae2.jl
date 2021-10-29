@@ -1,11 +1,11 @@
 using Avalon
 import Avalon.fit!
-import Yota.@nodiff
+# import Yota.@nodiff
 using Distributions
 using MLDataUtils
 
 
-@nodiff eps(x) x
+# @nodiff eps(x) x
 
 
 function binarycrossentropy(ŷ, y; agg=mean, ϵ=eps(eltype(ŷ)))
@@ -13,7 +13,7 @@ function binarycrossentropy(ŷ, y; agg=mean, ϵ=eps(eltype(ŷ)))
 end
 
 function kldiv_normal(mu, log_s2; agg=mean)
-    -1/2 * agg(@. 1 + log_s2 - mu ^ 2f0 - exp(log_s2))    
+    -1/2 * agg(@. 1 + log_s2 - mu ^ 2f0 - exp(log_s2))
 end
 
 
@@ -78,14 +78,14 @@ end
 
 function fit!(m::VAE, X::AbstractMatrix{T};
               n_epochs=50, batch_size=100, opt=Adam(; lr=1e-5), device=CPU()) where T
-    println("Starting training")          
-    for epoch in 1:n_epochs        
+    println("Starting training")
+    for epoch in 1:n_epochs
         epoch_cost = 0
         t = @elapsed for (i, x) in enumerate(eachbatch(X, size=batch_size))
             x = device(x)
             ϵ = typeof(x)(rand(Normal(0, 1), size(m.enc2mu.W, 1), batch_size))
             cost, g = grad(loss_function, m, ϵ, x)
-            update!(opt, m, g[1])
+            update!(opt, m, g[2])
             epoch_cost += cost
         end
         println("Epoch $epoch: avg_cost=$(epoch_cost / (size(X,2) / batch_size)), elapsed=$t")

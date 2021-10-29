@@ -5,7 +5,7 @@
                     m.W_ih, m.W_hh, m.b_ih, m.b_hh, x, h)
     # smoke tests for RNN
     m = RNN(10 => 5); x_seq = rand(10, 4, 2); h = init_hidden(m, 4)
-    grad((m, x_seq, h) -> begin h_all, h = m(x_seq, h); sum(h) end, m, x_seq, h)    
+    grad((m, x_seq, h) -> begin h_all, h = m(x_seq, h); sum(h) end, m, x_seq, h)
     grad((m, x_seq, h) -> begin h_all, h = m(x_seq, h); sum(h_all) end, m, x_seq, h)
 end
 
@@ -16,7 +16,7 @@ end
                     h, c = lstm_forward(W_ih, W_hh, b_ih, b_hh, x, h, c)
                     sum(h)
                     end,
-                    m.W_ih, m.W_hh, m.b_ih, m.b_hh, x, h, c)    
+                    m.W_ih, m.W_hh, m.b_ih, m.b_hh, x, h, c)
     # smokes for LSTM
     m = LSTM(10 => 5); x_seq = rand(10, 4, 2); h, c = init_hidden(m, 4)
     grad((m, x_seq, h, c) ->
@@ -32,6 +32,6 @@ end
                     m.W_ih, m.W_hh, m.b_ih, m.b_hh, x, h)
     # smoke tests for GRU
     m = GRU(10 => 5); x_seq = rand(10, 4, 2); h = init_hidden(m, 4)
-    grad((m, x_seq, h) -> begin h_all, h = m(x_seq, h); sum(h) end, m, x_seq, h)    
+    grad((m, x_seq, h) -> begin h_all, h = m(x_seq, h); sum(h) end, m, x_seq, h)
     grad((m, x_seq, h) -> begin h_all, h = m(x_seq, h); sum(h_all) end, m, x_seq, h)
 end

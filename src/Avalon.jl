@@ -2,9 +2,6 @@ module Avalon
 
 export
     grad,
-    @diffrule,
-    @diffrule_kw,
-    @nodiff,
     # initialization
     init_constant!,
     init_kaiming_normal!,
@@ -21,7 +18,7 @@ export
     logsigmoid,
     relu,
     leakyrelu,
-    # elu,
+    elu,
     softmax,
     logsoftmax,
     # losses
@@ -55,10 +52,7 @@ export
     trainmode!,
     testmode!,
     # device API (reexport from Yota)
-    best_available_device,
-    to_device,
-    CPU,
-    GPU
+    best_available_device
     # metrics (not exported by default)
 
 
