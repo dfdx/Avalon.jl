@@ -1,6 +1,6 @@
 # Avalon
 
-[![Build Status](https://travis-ci.org/dfdx/Avalon.jl.svg?branch=main)](https://travis-ci.org/dfdx/Avalon.jl)
+![Status](https://github.com/dfdx/Avalon.jl/actions/workflows/test.yml/badge.svg?branch=main)
 
 
 **Avalon** is a deep learning library in Julia with focus on **high performance** and **interoperability with existing DL frameworks**. Its main features include:
@@ -101,7 +101,7 @@ outlines stability level you should expect from various components of the librar
 | RNN             | No*         |
 | Losses          | Mostly      |
 | Activations     | Yes         |
-| Initializations | Mostly      | 
+| Initializations | Mostly      |
 | Optimizers      | Yes         |
 | Device API      | Yes         |
 | Fitting API     | No**        |
@@ -110,4 +110,4 @@ outlines stability level you should expect from various components of the librar
 
 `**` - function `fit!()` provides a convenient shortcut for training supervised learning models, but in its current state it's too basic for most real use cases; for more durable code consider writing your own method for training using `fit!()` as a template
 
-Please note that until version 1.0 "stable API" means that we will try our best to keep it unchanged, but we reserve the right to the break the rule in some rare and exceptional cases. 
+Please note that until version 1.0 "stable API" means that we will try our best to keep it unchanged, but we reserve the right to the break the rule in some rare and exceptional cases.
