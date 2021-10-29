@@ -1,10 +1,11 @@
 name = "Avalon"
 uuid = "d462d321-1585-4840-9f3e-06f5c1b6ea25"
 authors = ["Andrei Zhabinski <andrei.zhabinski@gmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+CUDAKernels = "72cfdca4-0801-4ab0-bf6a-d52aa10adc57"
 ChainRules = "082447d4-558c-5d27-93f4-14fc19e9eca2"
 ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
@@ -22,10 +23,14 @@ Yota = "cd998857-8626-517d-b929-70ad188a48f0"
 
 [compat]
 CUDA = "3"
+CUDAKernels = "0.3.1"
 ChainRules = "1"
 ChainRulesCore = "1"
 Distributions = "0.25"
+KernelAbstractions = "0.7"
+LoopVectorization = "0.12"
 MLDataUtils = "0.5"
 NNlib = "0.7"
-Yota = "0.6"
+Tullio = "0.3"
+Yota = "0.6.2"
 julia = "1.6"

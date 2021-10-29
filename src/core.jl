@@ -7,7 +7,7 @@ using CUDA
 import NNlib
 import NNlibCUDA
 import ChainRulesCore: rrule, rrule_via_ad, NoTangent, ZeroTangent, @thunk, unthunk
-using Tullio, KernelAbstractions, LoopVectorization
+using Tullio, KernelAbstractions, LoopVectorization, CUDAKernels
 
 
 include("yota_ext.jl")

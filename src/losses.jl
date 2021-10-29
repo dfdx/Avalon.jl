@@ -1,3 +1,5 @@
+import LinearAlgebra
+
 ################################################################################
 #                          Negative log-likelihood                             #
 ################################################################################
@@ -6,7 +8,8 @@
 Negative log-likelihood. ŷ should be a vector of normalized log probabilities.
 """
 function nllloss(ŷ::AbstractMatrix, c::AbstractVector{<:Real})
-    loss = @tullio (+) r = ŷ[c[k], k]
+    # loss = @tullio (+) r = ŷ[c[k], k]
+    loss = LinearAlgebra.tr(NNlib.gather(ŷ', c))
     return -loss / length(c)
 end
 
